@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>商店传送门 StoreLink Pro</title>
+
+  <!-- Flag Icons (MIT) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons/css/flag-icons.min.css">
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --text:#e6edf7;
+      --muted:#9fb0cc;
+      --line:rgba(255,255,255,.10);
+
+      --chip: rgba(15,23,42,.85);
+      --chipActive: rgba(47,129,247,.22);
+      --chipActiveLine: rgba(47,129,247,.45);
+
+      --appleBtn: rgba(31,42,68,.55);
+
+      --googleBtn: rgba(17, 96, 59, .22);
+      --googleLine: rgba(34, 197, 94, .35);
+      --googleText: rgba(34, 197, 94, .95);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1200px 700px at 20% 0%, #1b2a55 0%, var(--bg) 55%);
+      color:var(--text);
+    }
+
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+
+    .header{
+      padding:10px 6px 6px 6px;
+      margin-bottom:12px;
+      text-align:center;
+    }
+    .title{
+      font-size:18px;
+      font-weight:850;
+      letter-spacing:.2px;
+      margin:0;
+    }
+    .subtitle{
+      margin-top:8px;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.45;
+    }
+
+    .searchbar{
+      width:100%;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background: linear-gradient(180deg, rgba(17,27,46,.78), rgba(15,23,42,.60));
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      box-shadow: 0 10px 30px rgba(0,0,0,.22);
+    }
+    .searchbar input{
+      flex:1;
+      min-width:220px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(9, 16, 33, .55);
+      color:var(--text);
+      outline:none;
+    }
+    .count{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(15,23,42,.65);
+      padding:6px 10px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+
+    .chips{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      overflow:auto;
+      padding:10px 2px 2px 2px;
+      scrollbar-width: none;
+      width:100%;
+    }
+    .chips::-webkit-scrollbar{display:none}
+    .chip{
+      border:1px solid rgba(255,255,255,.14);
+      background:var(--chip);
+      color:var(--muted);
+      padding:7px 12px;
+      border-radius:999px;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+      transition:.12s transform ease, .12s border-color ease, .12s background ease;
+    }
+    .chip:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.22)}
+    .chip.active{
+      background:var(--chipActive);
+      color:var(--text);
+      border-color:var(--chipActiveLine);
+    }
+
+    .section{ margin-top:16px; }
+    .section h2{
+      margin:0 0 10px 0;
+      font-size:13px;
+      color:rgba(230,237,247,.92);
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap:12px;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background: linear-gradient(180deg, rgba(17,27,46,.80), rgba(15,23,42,.62));
+      box-shadow: 0 12px 34px rgba(0,0,0,.24);
+    }
+    .row{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      margin-bottom:12px;
+    }
+    .region{
+      display:flex;align-items:center;gap:10px;
+      font-size:14px;font-weight:780;
+    }
+
+    .flag{
+      width:22px;height:16px;border-radius:4px;overflow:hidden;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset;
+      flex:0 0 auto;
+    }
+    .flag .fi{width:100%;height:100%;display:block}
+
+    .code{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(15,23,42,.60);
+      padding:5px 10px;
+      border-radius:999px;
+      white-space:nowrap;
+      font-weight:700;
+      letter-spacing:.5px;
+    }
+
+    a{ color:inherit; }
+    .btns{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .btn{
+      text-decoration:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:11px 12px;
+      border-radius:14px;
+      font-size:13px;
+      font-weight:750;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(31,42,68,.55);
+      color:var(--text);
+      transition:.12s transform ease, .12s background ease, .12s border-color ease;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.22)}
+    .btn.apple{background:var(--appleBtn)}
+    .btn.google{
+      background: var(--googleBtn);
+      border-color: var(--googleLine);
+      color: var(--googleText);
+    }
+
+    .icon{
+      width:16px;height:16px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 auto;
+    }
+    .icon svg{width:16px;height:16px;display:block;fill:currentColor}
+
+    .empty{
+      margin-top:14px;
+      padding:16px;
+      border:1px dashed rgba(255,255,255,.18);
+      border-radius:18px;
+      color:var(--muted);
+      background:rgba(17,27,46,.35)
+    }
+
+    .footer{
+      margin-top:26px;
+      color:rgba(159,176,204,.75);
+      font-size:12px;
+      text-align:center;
+    }
+    .hr{
+      height:1px;
+      background:rgba(255,255,255,.10);
+      border:0;
+      margin:18px 0 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="title">商店传送门 StoreLink Pro</div>
+      <div class="subtitle">本页面由海外PM制作，用于查看对应地区商店页、产品和推荐信息，无法用于下载App，请知悉</div>
+    </div>
+
+    <div class="searchbar">
+      <input id="q" type="text" placeholder="搜索国家或代码（例如：US，日本）" autocomplete="off" />
+      <span class="count" id="countPill">共 0 个地区</span>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div id="content"></div>
+    <div id="empty" class="empty" style="display:none;">没有匹配结果</div>
+
+    <div class="footer">
+      <hr class="hr" />
+      Designed by Global Publishing PM
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // Link templates
+    // =========================
+    const APP_ID = "899247664";
+    const IOS_URL_TPL = (dsf, cc) =>
+      `https://itunes.apple.com/WebObjects/MZStore.woa/wa/resetAndRedirect?dsf=${dsf}&mt=8&url=/WebObjects/MZStore.woa/wa/viewSoftware?mt=8&id=${APP_ID}&cc=${cc}&urlDesc=`;
+    const GP_URL_TPL = (hl, gl) =>
+      `https://play.google.com/store/games?device=phone&hl=${encodeURIComponent(hl)}&gl=${encodeURIComponent(gl)}`;
+    const APPLE_PC_TPL = (cc) =>
+      `https://apps.apple.com/${cc}/iphone/today`;
+
+    // =========================
+    // iOS detection for Apple smart jump
+    // =========================
+    function isLikelyIOS(){
+      const ua = navigator.userAgent || "";
+      const platform = navigator.platform || "";
+      const maxTP = navigator.maxTouchPoints || 0;
+
+      if (/iPad|iPhone|iPod/i.test(ua)) return true;
+      if (platform === "MacIntel" && maxTP > 1) return true; // iPadOS 13+
+      return false;
+    }
+
+    // IMPORTANT (stability):
+    // - NO fallback to location.assign after window.open
+    //   to avoid "double open" on some browsers.
+    function openNewTabNoFallback(url){
+      const w = window.open(url, "_blank");
+      try { if (w) w.opener = null; } catch(e) {}
+    }
+
+    function openSmartApple(event, region){
+      const iosUrl = IOS_URL_TPL(region.dsf, region.cc);
+      const pcUrl  = APPLE_PC_TPL(region.cc);
+      const guessedIOS = isLikelyIOS();
+
+      // Manual override (for testing): Alt/Option click
+      const forcePick = event && (event.altKey || (event.metaKey && event.shiftKey));
+      if (forcePick){
+        const choice = window.prompt(
+          `【${region.cn}】选择要打开的 Apple 链接：\n1 = AppStore（iOS 专用）\n2 = Apple（PC）\n\n输入 1 或 2：`,
+          guessedIOS ? "1" : "2"
+        );
+        if (choice === "1") window.location.assign(iosUrl);
+        else if (choice === "2") openNewTabNoFallback(pcUrl);
+        return false;
+      }
+
+      // iOS: use same-tab navigation to avoid Edge iOS leaving about:blank tabs
+      if (guessedIOS) window.location.assign(iosUrl);
+      else openNewTabNoFallback(pcUrl);
+
+      return false;
+    }
+
+    // ===== Icons (inline SVG, use currentColor) =====
+    const ICON_APPLE = `
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M16.7 13.2c0-2.2 1.8-3.2 1.9-3.3c-1-1.5-2.6-1.7-3.1-1.7c-1.3-.1-2.5.8-3.1.8c-.6 0-1.6-.8-2.7-.8c-1.4 0-2.7.8-3.4 2.1c-1.5 2.6-.4 6.4 1.1 8.5c.7 1 1.5 2.1 2.6 2.1c1 0 1.4-.7 2.6-.7c1.2 0 1.5.7 2.7.7c1.1 0 1.8-1 2.5-2c.8-1.1 1.1-2.2 1.1-2.2c0-.1-2.2-.9-2.2-3.5z"/>
+          <path d="M14.9 6.6c.6-.8 1-1.9.9-3c-.9.1-2 .6-2.7 1.4c-.6.7-1.1 1.8-.9 2.9c1 .1 2-.5 2.7-1.3z"/>
+        </svg>
+      </span>
+    `;
+    const ICON_GOOGLE_PLAY = `
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 3.5v17c0 .8.9 1.3 1.6.9l14.4-8.5c.7-.4.7-1.4 0-1.8L5.6 2.6C4.9 2.2 4 2.7 4 3.5z"/>
+        </svg>
+      </span>
+    `;
+
+    // =========================
+    // Data
+    // =========================
+    const regions = [
+  { code: "CN", cn: "中国", cc: "cn", dsf: "143465", hl: "zh_CN", group: "东亚" },
+  { code: "TW", cn: "中国台湾", cc: "tw", dsf: "143470", hl: "zh_TW", group: "东亚" },
+  { code: "MO", cn: "中国澳门", cc: "mo", dsf: "143515", hl: "zh_HK", group: "东亚" },
+  { code: "HK", cn: "中国香港", cc: "hk", dsf: "143463", hl: "zh_HK", group: "东亚" },
+  { code: "JP", cn: "日本", cc: "jp", dsf: "143462", hl: "ja", group: "东亚" },
+  { code: "MN", cn: "蒙古国", cc: "mn", dsf: "143592", hl: "en", group: "东亚" },
+  { code: "KR", cn: "韩国", cc: "kr", dsf: "143466", hl: "ko", group: "东亚" },
+  { code: "ID", cn: "印尼", cc: "id", dsf: "143476", hl: "id", group: "东南亚" },
+  { code: "BN", cn: "文莱", cc: "bn", dsf: "143560", hl: "en", group: "东南亚" },
+  { code: "SG", cn: "新加坡", cc: "sg", dsf: "143464", hl: "en", group: "东南亚" },
+  { code: "KH", cn: "柬埔寨", cc: "kh", dsf: "143579", hl: "en", group: "东南亚" },
+  { code: "TH", cn: "泰国", cc: "th", dsf: "143475", hl: "th", group: "东南亚" },
+  { code: "LA", cn: "老挝", cc: "la", dsf: "143587", hl: "en", group: "东南亚" },
+  { code: "PH", cn: "菲律宾", cc: "ph", dsf: "143474", hl: "en", group: "东南亚" },
+  { code: "VN", cn: "越南", cc: "vn", dsf: "143471", hl: "vi", group: "东南亚" },
+  { code: "MY", cn: "马来西亚", cc: "my", dsf: "143473", hl: "en", group: "东南亚" },
+  { code: "BZ", cn: "伯利兹", cc: "bz", dsf: "143555", hl: "en", group: "北美" },
+  { code: "CA", cn: "加拿大", cc: "ca", dsf: "143455", hl: "en", group: "北美" },
+  { code: "GT", cn: "危地马拉", cc: "gt", dsf: "143504", hl: "es", group: "北美" },
+  { code: "CR", cn: "哥斯达黎加", cc: "cr", dsf: "143495", hl: "es", group: "北美" },
+  { code: "LC", cn: "圣卢西亚", cc: "lc", dsf: "143549", hl: "en", group: "北美" },
+  { code: "KN", cn: "圣基茨和尼维斯", cc: "kn", dsf: "143548", hl: "en", group: "北美" },
+  { code: "VC", cn: "圣文森特和格林纳丁斯", cc: "vc", dsf: "143550", hl: "en", group: "北美" },
+  { code: "GY", cn: "圭亚那", cc: "gy", dsf: "143553", hl: "en", group: "北美" },
+  { code: "MX", cn: "墨西哥", cc: "mx", dsf: "143468", hl: "es", group: "北美" },
+  { code: "DM", cn: "多米尼克", cc: "dm", dsf: "143545", hl: "en", group: "北美" },
+  { code: "DO", cn: "多米尼加", cc: "do", dsf: "143508", hl: "es", group: "北美" },
+  { code: "AI", cn: "安圭拉", cc: "ai", dsf: "143538", hl: "en", group: "北美" },
+  { code: "AG", cn: "安提瓜和巴布达", cc: "ag", dsf: "143540", hl: "en", group: "北美" },
+  { code: "NI", cn: "尼加拉瓜", cc: "ni", dsf: "143512", hl: "es", group: "北美" },
+  { code: "BS", cn: "巴哈马", cc: "bs", dsf: "143539", hl: "en", group: "北美" },
+  { code: "BB", cn: "巴巴多斯", cc: "bb", dsf: "143541", hl: "en", group: "北美" },
+  { code: "PA", cn: "巴拿马", cc: "pa", dsf: "143485", hl: "es", group: "北美" },
+  { code: "KY", cn: "开曼群岛", cc: "ky", dsf: "143544", hl: "en", group: "北美" },
+  { code: "GD", cn: "格林纳达", cc: "gd", dsf: "143546", hl: "en", group: "北美" },
+  { code: "HN", cn: "洪都拉斯", cc: "hn", dsf: "143510", hl: "es", group: "北美" },
+  { code: "JM", cn: "牙买加", cc: "jm", dsf: "143511", hl: "en", group: "北美" },
+  { code: "TC", cn: "特克斯和凯科斯群岛", cc: "tc", dsf: "143552", hl: "en", group: "北美" },
+  { code: "TT", cn: "特立尼达和多巴哥", cc: "tt", dsf: "143551", hl: "en", group: "北美" },
+  { code: "BM", cn: "百慕大", cc: "bm", dsf: "143542", hl: "en", group: "北美" },
+  { code: "US", cn: "美国", cc: "us", dsf: "143441", hl: "en", group: "北美" },
+  { code: "VG", cn: "英属维尔京群岛", cc: "vg", dsf: "143543", hl: "en", group: "北美" },
+  { code: "SV", cn: "萨尔瓦多", cc: "sv", dsf: "143506", hl: "es", group: "北美" },
+  { code: "MS", cn: "蒙特塞拉特", cc: "ms", dsf: "143547", hl: "en", group: "北美" },
+  { code: "BT", cn: "不丹", cc: "bt", dsf: "143577", hl: "en", group: "南亚与中亚" },
+  { code: "UZ", cn: "乌兹别克斯坦", cc: "uz", dsf: "143566", hl: "en", group: "南亚与中亚" },
+  { code: "IN", cn: "印度", cc: "in", dsf: "143467", hl: "en", group: "南亚与中亚" },
+  { code: "KG", cn: "吉尔吉斯斯坦", cc: "kg", dsf: "143586", hl: "en", group: "南亚与中亚" },
+  { code: "KZ", cn: "哈萨克斯坦", cc: "kz", dsf: "143517", hl: "en", group: "南亚与中亚" },
+  { code: "TM", cn: "土库曼斯坦", cc: "tm", dsf: "143604", hl: "en", group: "南亚与中亚" },
+  { code: "TJ", cn: "塔吉克斯坦", cc: "tj", dsf: "143603", hl: "en", group: "南亚与中亚" },
+  { code: "NP", cn: "尼泊尔", cc: "np", dsf: "143484", hl: "en", group: "南亚与中亚" },
+  { code: "PK", cn: "巴基斯坦", cc: "pk", dsf: "143477", hl: "en", group: "南亚与中亚" },
+  { code: "LK", cn: "斯里兰卡", cc: "lk", dsf: "143486", hl: "en", group: "南亚与中亚" },
+  { code: "FM", cn: "密克罗尼西亚联邦", cc: "fm", dsf: "143591", hl: "en", group: "大洋洲" },
+  { code: "PG", cn: "巴布亚新几内亚", cc: "pg", dsf: "143597", hl: "en", group: "大洋洲" },
+  { code: "PW", cn: "帕劳", cc: "pw", dsf: "143595", hl: "en", group: "大洋洲" },
+  { code: "SB", cn: "所罗门群岛", cc: "sb", dsf: "143601", hl: "en", group: "大洋洲" },
+  { code: "FJ", cn: "斐济", cc: "fj", dsf: "143583", hl: "en", group: "大洋洲" },
+  { code: "NZ", cn: "新西兰", cc: "nz", dsf: "143461", hl: "en", group: "大洋洲" },
+  { code: "AU", cn: "澳大利亚", cc: "au", dsf: "143460", hl: "en", group: "大洋洲" },
+  { code: "UY", cn: "乌拉圭", cc: "uy", dsf: "143514", hl: "es", group: "拉丁美洲" },
+  { code: "EC", cn: "厄瓜多尔", cc: "ec", dsf: "143509", hl: "es", group: "拉丁美洲" },
+  { code: "CO", cn: "哥伦比亚", cc: "co", dsf: "143501", hl: "es", group: "拉丁美洲" },
+  { code: "VE", cn: "委内瑞拉", cc: "ve", dsf: "143502", hl: "es", group: "拉丁美洲" },
+  { code: "PY", cn: "巴拉圭", cc: "py", dsf: "143513", hl: "es", group: "拉丁美洲" },
+  { code: "BR", cn: "巴西", cc: "br", dsf: "143503", hl: "pt_BR", group: "拉丁美洲" },
+  { code: "CL", cn: "智利", cc: "cl", dsf: "143483", hl: "es", group: "拉丁美洲" },
+  { code: "BO", cn: "玻利维亚", cc: "bo", dsf: "143556", hl: "es", group: "拉丁美洲" },
+  { code: "PE", cn: "秘鲁", cc: "pe", dsf: "143507", hl: "es", group: "拉丁美洲" },
+  { code: "SR", cn: "苏里南", cc: "sr", dsf: "143554", hl: "en", group: "拉丁美洲" },
+  { code: "AR", cn: "阿根廷", cc: "ar", dsf: "143505", hl: "es", group: "拉丁美洲" },
+  { code: "DK", cn: "丹麦", cc: "dk", dsf: "143458", hl: "da", group: "欧洲" },
+  { code: "UA", cn: "乌克兰", cc: "ua", dsf: "143492", hl: "uk", group: "欧洲" },
+  { code: "AM", cn: "亚美尼亚", cc: "am", dsf: "143524", hl: "en", group: "欧洲" },
+  { code: "RU", cn: "俄罗斯", cc: "ru", dsf: "143469", hl: "ru", group: "欧洲" },
+  { code: "BG", cn: "保加利亚", cc: "bg", dsf: "143526", hl: "bg", group: "欧洲" },
+  { code: "HR", cn: "克罗地亚", cc: "hr", dsf: "143494", hl: "hr", group: "欧洲" },
+  { code: "IS", cn: "冰岛", cc: "is", dsf: "143558", hl: "is", group: "欧洲" },
+  { code: "HU", cn: "匈牙利", cc: "hu", dsf: "143482", hl: "hu", group: "欧洲" },
+  { code: "MK", cn: "北马其顿", cc: "mk", dsf: "143530", hl: "mk", group: "欧洲" },
+  { code: "LU", cn: "卢森堡", cc: "lu", dsf: "143451", hl: "fr", group: "欧洲" },
+  { code: "CY", cn: "塞浦路斯", cc: "cy", dsf: "143557", hl: "en", group: "欧洲" },
+  { code: "AT", cn: "奥地利", cc: "at", dsf: "143445", hl: "de", group: "欧洲" },
+  { code: "GR", cn: "希腊", cc: "gr", dsf: "143448", hl: "el", group: "欧洲" },
+  { code: "DE", cn: "德国", cc: "de", dsf: "143443", hl: "de", group: "欧洲" },
+  { code: "IT", cn: "意大利", cc: "it", dsf: "143450", hl: "it", group: "欧洲" },
+  { code: "LV", cn: "拉脱维亚", cc: "lv", dsf: "143519", hl: "lv", group: "欧洲" },
+  { code: "NO", cn: "挪威", cc: "no", dsf: "143457", hl: "no", group: "欧洲" },
+  { code: "CZ", cn: "捷克", cc: "cz", dsf: "143489", hl: "cs", group: "欧洲" },
+  { code: "MD", cn: "摩尔多瓦", cc: "md", dsf: "143523", hl: "ro", group: "欧洲" },
+  { code: "SK", cn: "斯洛伐克", cc: "sk", dsf: "143496", hl: "sk", group: "欧洲" },
+  { code: "SI", cn: "斯洛文尼亚", cc: "si", dsf: "143499", hl: "sl", group: "欧洲" },
+  { code: "BE", cn: "比利时", cc: "be", dsf: "143446", hl: "fr", group: "欧洲" },
+  { code: "FR", cn: "法国", cc: "fr", dsf: "143442", hl: "fr", group: "欧洲" },
+  { code: "PL", cn: "波兰", cc: "pl", dsf: "143478", hl: "pl", group: "欧洲" },
+  { code: "IE", cn: "爱尔兰", cc: "ie", dsf: "143449", hl: "en", group: "欧洲" },
+  { code: "EE", cn: "爱沙尼亚", cc: "ee", dsf: "143518", hl: "et", group: "欧洲" },
+  { code: "SE", cn: "瑞典", cc: "se", dsf: "143456", hl: "sv", group: "欧洲" },
+  { code: "CH", cn: "瑞士", cc: "ch", dsf: "143459", hl: "de", group: "欧洲" },
+  { code: "BY", cn: "白俄罗斯", cc: "by", dsf: "143565", hl: "ru", group: "欧洲" },
+  { code: "LT", cn: "立陶宛", cc: "lt", dsf: "143520", hl: "lt", group: "欧洲" },
+  { code: "RO", cn: "罗马尼亚", cc: "ro", dsf: "143487", hl: "ro", group: "欧洲" },
+  { code: "FI", cn: "芬兰", cc: "fi", dsf: "143447", hl: "fi", group: "欧洲" },
+  { code: "GB", cn: "英国", cc: "gb", dsf: "143444", hl: "en", group: "欧洲" },
+  { code: "NL", cn: "荷兰", cc: "nl", dsf: "143452", hl: "nl", group: "欧洲" },
+  { code: "PT", cn: "葡萄牙", cc: "pt", dsf: "143453", hl: "pt", group: "欧洲" },
+  { code: "ES", cn: "西班牙", cc: "es", dsf: "143454", hl: "es", group: "欧洲" },
+  { code: "AZ", cn: "阿塞拜疆", cc: "az", dsf: "143568", hl: "en", group: "欧洲" },
+  { code: "AL", cn: "阿尔巴尼亚", cc: "al", dsf: "143575", hl: "en", group: "欧洲" },
+  { code: "MT", cn: "马耳他", cc: "mt", dsf: "143521", hl: "en", group: "欧洲" },
+  { code: "UG", cn: "乌干达", cc: "ug", dsf: "143537", hl: "en", group: "非洲与中东" },
+  { code: "TD", cn: "乍得", cc: "td", dsf: "143581", hl: "fr", group: "非洲与中东" },
+  { code: "YE", cn: "也门", cc: "ye", dsf: "143571", hl: "ar", group: "非洲与中东" },
+  { code: "IL", cn: "以色列", cc: "il", dsf: "143491", hl: "he", group: "非洲与中东" },
+  { code: "CV", cn: "佛得角", cc: "cv", dsf: "143580", hl: "pt", group: "非洲与中东" },
+  { code: "GM", cn: "冈比亚", cc: "gm", dsf: "143584", hl: "en", group: "非洲与中东" },
+  { code: "GW", cn: "几内亚比绍", cc: "gw", dsf: "143585", hl: "en", group: "非洲与中东" },
+  { code: "CG", cn: "刚果（布）", cc: "cg", dsf: "143582", hl: "fr", group: "非洲与中东" },
+  { code: "LR", cn: "利比里亚", cc: "lr", dsf: "143588", hl: "en", group: "非洲与中东" },
+  { code: "GH", cn: "加纳", cc: "gh", dsf: "143573", hl: "en", group: "非洲与中东" },
+  { code: "ZA", cn: "南非", cc: "za", dsf: "143472", hl: "en", group: "非洲与中东" },
+  { code: "BW", cn: "博茨瓦纳", cc: "bw", dsf: "143525", hl: "en", group: "非洲与中东" },
+  { code: "QA", cn: "卡塔尔", cc: "qa", dsf: "143498", hl: "ar", group: "非洲与中东" },
+  { code: "TR", cn: "土耳其", cc: "tr", dsf: "143480", hl: "tr", group: "非洲与中东" },
+  { code: "ST", cn: "圣多美和普林西比", cc: "st", dsf: "143598", hl: "pt", group: "非洲与中东" },
+  { code: "TZ", cn: "坦桑尼亚", cc: "tz", dsf: "143572", hl: "en", group: "非洲与中东" },
+  { code: "EG", cn: "埃及", cc: "eg", dsf: "143516", hl: "ar", group: "非洲与中东" },
+  { code: "SN", cn: "塞内加尔", cc: "sn", dsf: "143535", hl: "fr", group: "非洲与中东" },
+  { code: "SL", cn: "塞拉利昂", cc: "sl", dsf: "143600", hl: "en", group: "非洲与中东" },
+  { code: "SC", cn: "塞舌尔", cc: "sc", dsf: "143599", hl: "en", group: "非洲与中东" },
+  { code: "AO", cn: "安哥拉", cc: "ao", dsf: "143564", hl: "pt", group: "非洲与中东" },
+  { code: "NG", cn: "尼日利亚", cc: "ng", dsf: "143561", hl: "en", group: "非洲与中东" },
+  { code: "NE", cn: "尼日尔", cc: "ne", dsf: "143534", hl: "fr", group: "非洲与中东" },
+  { code: "BH", cn: "巴林", cc: "bh", dsf: "143559", hl: "ar", group: "非洲与中东" },
+  { code: "BF", cn: "布基纳法索", cc: "bf", dsf: "143578", hl: "fr", group: "非洲与中东" },
+  { code: "SZ", cn: "斯威士兰", cc: "sz", dsf: "143602", hl: "en", group: "非洲与中东" },
+  { code: "MR", cn: "毛里塔尼亚", cc: "mr", dsf: "143590", hl: "fr", group: "非洲与中东" },
+  { code: "MU", cn: "毛里求斯", cc: "mu", dsf: "143533", hl: "en", group: "非洲与中东" },
+  { code: "SA", cn: "沙特阿拉伯", cc: "sa", dsf: "143479", hl: "ar", group: "非洲与中东" },
+  { code: "ZW", cn: "津巴布韦", cc: "zw", dsf: "143605", hl: "en", group: "非洲与中东" },
+  { code: "KW", cn: "科威特", cc: "kw", dsf: "143493", hl: "ar", group: "非洲与中东" },
+  { code: "TN", cn: "突尼斯", cc: "tn", dsf: "143536", hl: "ar", group: "非洲与中东" },
+  { code: "JO", cn: "约旦", cc: "jo", dsf: "143528", hl: "ar", group: "非洲与中东" },
+  { code: "NA", cn: "纳米比亚", cc: "na", dsf: "143594", hl: "en", group: "非洲与中东" },
+  { code: "KE", cn: "肯尼亚", cc: "ke", dsf: "143529", hl: "en", group: "非洲与中东" },
+  { code: "MZ", cn: "莫桑比克", cc: "mz", dsf: "143593", hl: "pt", group: "非洲与中东" },
+  { code: "BJ", cn: "贝宁", cc: "bj", dsf: "143576", hl: "fr", group: "非洲与中东" },
+  { code: "DZ", cn: "阿尔及利亚", cc: "dz", dsf: "143563", hl: "ar", group: "非洲与中东" },
+  { code: "OM", cn: "阿曼", cc: "om", dsf: "143562", hl: "ar", group: "非洲与中东" },
+  { code: "AE", cn: "阿联酋", cc: "ae", dsf: "143481", hl: "ar", group: "非洲与中东" },
+  { code: "MW", cn: "马拉维", cc: "mw", dsf: "143589", hl: "en", group: "非洲与中东" },
+  { code: "MG", cn: "马达加斯加", cc: "mg", dsf: "143531", hl: "fr", group: "非洲与中东" },
+  { code: "ML", cn: "马里", cc: "ml", dsf: "143532", hl: "fr", group: "非洲与中东" },
+  { code: "LB", cn: "黎巴嫩", cc: "lb", dsf: "143497", hl: "ar", group: "非洲与中东" }
+];
+
+    // Hot list (manual order required)
+    const hotCodesOrdered = ["CN","US","JP","KR","TW","GB","DE","TH","BR"];
+    const hotSet = new Set(hotCodesOrdered);
+
+    const chipDefs = [
+      { id:"ALL", label:"全部" },
+      { id:"HOT", label:"🔥 热门" },
+      { id:"北美", label:"北美" },
+      { id:"东亚", label:"东亚" },
+      { id:"东南亚", label:"东南亚" },
+      { id:"南亚与中亚", label:"南亚与中亚" },
+      { id:"欧洲", label:"欧洲" },
+      { id:"拉丁美洲", label:"拉丁美洲" },
+      { id:"大洋洲", label:"大洋洲" },
+      { id:"非洲与中东", label:"非洲与中东" },
+    ];
+
+    const sectionOrder = [
+      { id:"HOT", title:"🔥 热门" },
+      { id:"北美", title:"北美" },
+      { id:"东亚", title:"东亚" },
+      { id:"东南亚", title:"东南亚" },
+      { id:"南亚与中亚", title:"南亚与中亚" },
+      { id:"欧洲", title:"欧洲" },
+      { id:"拉丁美洲", title:"拉丁美洲" },
+      { id:"大洋洲", title:"大洋洲" },
+      { id:"非洲与中东", title:"非洲与中东" },
+    ];
+
+    let activeChip = "ALL";
+
+    function renderChips(){
+      const el = document.getElementById("chips");
+      el.innerHTML = chipDefs.map(c =>
+        `<div class="chip ${c.id===activeChip?'active':''}" data-chip="${c.id}">${c.label}</div>`
+      ).join("");
+
+      el.querySelectorAll(".chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+          activeChip = chip.getAttribute("data-chip");
+          render();
+        });
+      });
+    }
+
+    function matchesSearch(r, q){
+      if(!q) return true;
+      const raw = q.trim();
+      const s = raw.toLowerCase();
+      if(!s) return true;
+      return r.code.toLowerCase().includes(s) || r.cn.includes(raw);
+    }
+
+    function flagHTML(cc){
+      return `<span class="flag"><span class="fi fi-${cc}"></span></span>`;
+    }
+
+    function cardHTML(r){
+      const label = `${flagHTML(r.cc)}<span>${r.cn}</span>`;
+      const gpUrl = GP_URL_TPL(r.hl, r.cc);
+      const payload = JSON.stringify({dsf:r.dsf, cc:r.cc, cn:r.cn});
+
+      return `
+        <div class="card">
+          <div class="row">
+            <div class="region">${label}</div>
+            <div class="code">${r.code}</div>
+          </div>
+
+          <div class="btns">
+            <a class="btn apple" href="#"
+               title="AppStore"
+               onclick='return openSmartApple(event, ${payload})'>
+              ${ICON_APPLE}<span>Apple</span>
+            </a>
+
+            <a class="btn google" href="${gpUrl}"
+               title="GooglePlay"
+               target="_blank" rel="noopener noreferrer">
+              ${ICON_GOOGLE_PLAY}<span>Google</span>
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    function sectionHTML(title, cards){
+      if (!cards.length) return "";
+      return `
+        <div class="section">
+          <h2>${title}</h2>
+          <div class="grid">${cards.join("")}</div>
+        </div>
+      `;
+    }
+
+    function buildHotList(filtered){
+      const byCode = new Map(filtered.map(r => [r.code, r]));
+      const list = [];
+      for (const code of hotCodesOrdered){
+        const r = byCode.get(code);
+        if (r) list.push(r);
+      }
+      return list;
+    }
+
+    function render(){
+      renderChips();
+
+      const q = document.getElementById("q").value || "";
+
+      // Filter by search first
+      const filtered = regions.filter(r => matchesSearch(r, q));
+
+      // For region sections, we still want stable display order:
+      const filteredSortedZh = filtered.slice().sort((a,b) => a.cn.localeCompare(b.cn, "zh"));
+
+      const content = [];
+      const contentEl = document.getElementById("content");
+      const emptyEl = document.getElementById("empty");
+
+      if (activeChip === "ALL"){
+        // 1) Hot section (manual order)
+        const hotList = buildHotList(filtered);
+        content.push(sectionHTML("🔥 热门", hotList.map(cardHTML)));
+
+        // 2) Region sections (IMPORTANT: include hot regions again)
+        for (const s of sectionOrder){
+          if (s.id === "HOT") continue;
+          const list = filteredSortedZh.filter(r => r.group === s.id);
+          content.push(sectionHTML(s.title, list.map(cardHTML)));
+        }
+
+        // Count = unique regions (no double count)
+        document.getElementById("countPill").textContent = `共 ${filteredSortedZh.length} 个地区`;
+      } else if (activeChip === "HOT"){
+        const hotList = buildHotList(filtered);
+        content.push(sectionHTML("🔥 热门", hotList.map(cardHTML)));
+        document.getElementById("countPill").textContent = `共 ${hotList.length} 个地区`;
+      } else {
+        const list = filteredSortedZh.filter(r => r.group === activeChip);
+        content.push(sectionHTML(activeChip, list.map(cardHTML)));
+        document.getElementById("countPill").textContent = `共 ${list.length} 个地区`;
+      }
+
+      const html = content.join("");
+      contentEl.innerHTML = html;
+
+      const hasCard = contentEl.querySelector(".card");
+      if (!hasCard){
+        contentEl.innerHTML = "";
+        emptyEl.style.display = "block";
+      } else {
+        emptyEl.style.display = "none";
+      }
+    }
+
+    document.getElementById("q").addEventListener("input", render);
+    render();
+  </script>
+</body>
+</html>
